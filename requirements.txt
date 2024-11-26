@@ -1,0 +1,8 @@
+streamlit==1.26.0       # Streamlit for building the app
+pandas==2.0.3           # For data manipulation
+numpy==1.26.0           # For numerical computations
+scikit-learn==1.4.2     # For machine learning models
+matplotlib==3.8.1       # For data visualization
+plotly==5.16.2          # Optional: If used for interactive plots
+wrds==3.1.6             # For connecting to WRDS
+xgboost==1.7.6          # Optional: If using XGBoost for modeling
