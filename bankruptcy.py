@@ -7,6 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay, roc_curve, RocCurveDisplay
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import streamlit as st
  
 # Step 1: Connect to WRDS and Retrieve Data
 db = wrds.Connection()
