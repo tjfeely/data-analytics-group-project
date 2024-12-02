@@ -6,3 +6,4 @@ matplotlib==3.8.1       # For data visualization
 plotly==5.16.2          # Optional: If used for interactive plots
 wrds==3.1.6             # For connecting to WRDS
 xgboost==1.7.6          # Optional: If using XGBoost for modeling
+joblib
