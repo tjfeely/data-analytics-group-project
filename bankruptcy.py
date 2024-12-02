@@ -8,6 +8,7 @@ from sklearn.metrics import (
     classification_report, roc_auc_score, confusion_matrix,
     ConfusionMatrixDisplay, roc_curve, RocCurveDisplay
 )
+from sklearn.utils.validation import check_is_fitted
 import streamlit as st
 import joblib
 import wrds
@@ -59,8 +60,17 @@ except FileNotFoundError:
     joblib.dump(model, model_path)
     print("Model trained successfully and saved.")
 
-# Step 4: Evaluate Model
+# Step 4: Ensure Model is Fitted
+def ensure_model_is_fitted(model):
+    try:
+        check_is_fitted(model)
+    except:
+        print("The model is not fitted. Training the model now...")
+        model.fit(X_train, y_train)
+
+# Step 5: Evaluate Model
 def evaluate_model():
+    ensure_model_is_fitted(model)  # Ensure the model is fitted
     y_pred = model.predict(X_test)
     y_pred_proba = model.predict_proba(X_test)[:, 1]
 
@@ -84,12 +94,9 @@ def evaluate_model():
     plt.title("ROC Curve")
     plt.show()
 
-# Step 5: Predict Bankruptcy for a Selected Company
+# Step 6: Predict Bankruptcy for a Selected Company
 def predict_bankruptcy_for_company(company_identifier, use_recent=True):
-    if not hasattr(model, "n_estimators_"):
-        print("The model is not trained yet. Training the model now...")
-        model.fit(X_train, y_train)
-
+    ensure_model_is_fitted(model)  # Ensure the model is fitted
     dataset = data if not use_recent else data.groupby('gvkey').last().reset_index()
     company_data = dataset[(dataset['gvkey'] == company_identifier) | (dataset['tic'] == company_identifier)]
 
@@ -106,12 +113,9 @@ def predict_bankruptcy_for_company(company_identifier, use_recent=True):
 
     print(f"Prediction for {company_name} ({gvkey}): {predicted_label} (probability: {probability[0]:.2f})")
 
-# Step 6: Backtest with Historical Data for Bankrupt Companies
+# Step 7: Backtest with Historical Data for Bankrupt Companies
 def backtest_bankruptcy():
-    if not hasattr(model, "n_estimators_"):
-        print("The model is not trained yet. Training the model now...")
-        model.fit(X_train, y_train)
-
+    ensure_model_is_fitted(model)  # Ensure the model is fitted
     bankrupt_companies = data[data['Bankruptcy'] == 1]
     print("Bankrupt Companies in the Dataset:")
     print(bankrupt_companies[['gvkey', 'tic']].drop_duplicates())
@@ -123,7 +127,7 @@ def backtest_bankruptcy():
             break
         predict_bankruptcy_for_company(company_identifier, use_recent=False)
 
-# Step 7: Streamlit Integration
+# Step 8: Streamlit Integration
 st.title("Bankruptcy Prediction System")
 st.write("This tool allows you to predict bankruptcy for companies based on financial ratios.")
 
